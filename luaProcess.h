@@ -38,7 +38,7 @@ typedef struct __attribute((packed)) {
 void LuaPreprocess(u8* luaData) {
     LuaFileHeader* fileHeader = (LuaFileHeader*)luaData;
     if (fileHeader->magic != BZLA_MAGIC)
-        panic("LUA file header magic is nonmatching");
+        panic("LUA file header magic is nonmatching; is this a binary LUA?");
 
     LuaBytecodeHeader* bytecodeHeader = fileHeader->bytecodeHeader;   
     if (bytecodeHeader->magic != _LUA_MAGIC)
