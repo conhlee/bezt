@@ -137,11 +137,11 @@ void BfwsdProcess(u8* bfwsdData) {
     if (lookupEntry == NULL)
         panic("Lookup Entry not found");
 
-    BfwsdInfoBlock* infoBlock = bfwsdData + lookupEntry->blockOffset;
+    BfwsdInfoBlock* infoBlock = (BfwsdInfoBlock*)(bfwsdData + lookupEntry->blockOffset);
     if (infoBlock->magic != INFO_MAGIC)
         panic("BFWSD info block magic is nonmatching");
 
-    infoBlock->waveIdTableRtRef;    
+    (void)infoBlock->waveIdTableRtRef; // TODO
 }
 
 #endif // BFWSD_PROCESS_H

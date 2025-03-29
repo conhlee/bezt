@@ -200,11 +200,13 @@ void BfsarProcessFileInfo(u8* bfsarData) {
     if (lookupEntry == NULL)
         panic("Lookup Entry not found");
 
-    BfsarInfoBlock* infoBlock = bfsarData + lookupEntry->blockOffset;
+    BfsarInfoBlock* infoBlock = (BfsarInfoBlock*)(bfsarData + lookupEntry->blockOffset);
     if (infoBlock->magic != INFO_MAGIC)
         panic("BFSAR info block magic is nonmatching");
     
-    BfsarInfoReferenceTable* referenceTable = infoBlock->offsetOrigin + infoBlock->fileInfoRtRef.sectionOffset;
+    BfsarInfoReferenceTable* referenceTable = (BfsarInfoReferenceTable*)(
+        infoBlock->offsetOrigin + infoBlock->fileInfoRtRef.sectionOffset
+    );
     for (unsigned i = 0; i < referenceTable->entryCount; i++) {
         if (
             referenceTable->references[i].sectionType == 0 ||
@@ -212,15 +214,21 @@ void BfsarProcessFileInfo(u8* bfsarData) {
         )
             continue;
 
-        BfsarSectionRef* secondRef = referenceTable->offsetOrigin + referenceTable->references[i].sectionOffset;
+        BfsarSectionRef* secondRef = (BfsarSectionRef*)(
+            referenceTable->offsetOrigin + referenceTable->references[i].sectionOffset
+        );
 
         if (secondRef->sectionType == 0x220C) {
-            BfsarInternalFileInfo* fileInfo = secondRef->offsetOrigin + secondRef->sectionOffset;
+            BfsarInternalFileInfo* fileInfo = (BfsarInternalFileInfo*)(
+                secondRef->offsetOrigin + secondRef->sectionOffset
+            );
 
             printf("%u. Internal, size=%u\n", i+1, fileInfo->fileSize);
         }
         else if (secondRef->sectionType == 0x220D) {
-            BfsarExternalFileInfo* fileInfo = secondRef->offsetOrigin + secondRef->sectionOffset;
+            BfsarExternalFileInfo* fileInfo = (BfsarExternalFileInfo*)(
+                secondRef->offsetOrigin + secondRef->sectionOffset
+            );
 
             printf("%u. External, path=%s\n", i+1, fileInfo->filename);
         }
@@ -231,7 +239,9 @@ void BfsarProcessFileInfo(u8* bfsarData) {
 }
 
 BfsarSectionRef* _BfsarGetFileFromIndex(BfsarInfoBlock* infoBlock, u32 index) {
-    BfsarInfoReferenceTable* referenceTable = infoBlock->offsetOrigin + infoBlock->fileInfoRtRef.sectionOffset;
+    BfsarInfoReferenceTable* referenceTable = (BfsarInfoReferenceTable*)(
+        infoBlock->offsetOrigin + infoBlock->fileInfoRtRef.sectionOffset
+    );
 
     return (BfsarSectionRef*)(referenceTable->offsetOrigin + referenceTable->references[index].sectionOffset);
 }
@@ -261,7 +271,7 @@ void BfsarProcess(u8* bfsarData) {
     if (lookupEntry == NULL)
         panic("Lookup Entry not found");
 
-    BfsarInfoBlock* infoBlock = bfsarData + lookupEntry->blockOffset;
+    BfsarInfoBlock* infoBlock = (BfsarInfoBlock*)(bfsarData + lookupEntry->blockOffset);
     if (infoBlock->magic != INFO_MAGIC)
         panic("BFSAR info block magic is nonmatching");
 
@@ -269,7 +279,9 @@ void BfsarProcess(u8* bfsarData) {
 
     unsigned grpCnt = 0, bnkCnt = 0, warCnt = 0, wavCnt = 0, wsdCnt = 0, seqCnt = 0, stmCnt = 0;
 
-    BfsarInfoReferenceTable* referenceTable = infoBlock->offsetOrigin + infoBlock->soundInfoRtRef.sectionOffset;
+    BfsarInfoReferenceTable* referenceTable = (BfsarInfoReferenceTable*)(
+        infoBlock->offsetOrigin + infoBlock->soundInfoRtRef.sectionOffset
+    );
     for (unsigned i = 0; i < referenceTable->entryCount; i++) {
         if (
             referenceTable->references[i].sectionType == 0 ||
@@ -277,18 +289,24 @@ void BfsarProcess(u8* bfsarData) {
         )
             continue;
 
-        BfsarSoundInfo* soundInfo = referenceTable->offsetOrigin + referenceTable->references[i].sectionOffset;
+        BfsarSoundInfo* soundInfo = (BfsarSoundInfo*)(
+            referenceTable->offsetOrigin + referenceTable->references[i].sectionOffset
+        );
 
         char* fileName = "N/A";
         char* fileType = "N/A";
 
         BfsarSectionRef* fileRef = _BfsarGetFileFromIndex(infoBlock, soundInfo->fileIndex);
         if (fileRef->sectionType == 0x220D) {
-            BfsarExternalFileInfo* fileInfo = fileRef->offsetOrigin + fileRef->sectionOffset;
+            BfsarExternalFileInfo* fileInfo = (BfsarExternalFileInfo*)(
+                fileRef->offsetOrigin + fileRef->sectionOffset
+            );
             fileName = fileInfo->filename;
         }
         else if (fileRef->sectionType == 0x220C) {
-            BfsarInternalFileInfo* fileInfo = fileRef->offsetOrigin + fileRef->sectionOffset;
+            BfsarInternalFileInfo* fileInfo = (BfsarInternalFileInfo*)(
+                fileRef->offsetOrigin + fileRef->sectionOffset
+            );
 
             u32 fileMagic = *(u32*)(fileBlock->data + fileInfo->dataRef.sectionOffset);
 
