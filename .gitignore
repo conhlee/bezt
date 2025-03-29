@@ -1,0 +1,15 @@
+.vscode
+
+.DS_Store
+
+*.o
+
+*.pcm
+*.wav
+*.lua
+*.luac
+*.opus
+*.txt
+
+bezelarc
+bezt
