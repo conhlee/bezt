@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -ggdb -I/opt/homebrew/Cellar/zstd/1.5.7/include -I/opt/homebrew/Cellar/opus/1.5.2/include
-LDFLAGS = -L/opt/homebrew/Cellar/zstd/1.5.7/lib -lz -lzstd -L/opt/homebrew/Cellar/opus/1.5.2/lib -lopus
+CFLAGS += $(shell pkg-config --cflags zlib zstd opus)
+LDFLAGS += $(shell pkg-config --libs zlib zstd opus)
 TARGET = bezt
 SOURCES = main.c files.c compression.c list.c common.c
 OBJECTS = $(SOURCES:.c=.o)

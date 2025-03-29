@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-#include <opus/opus.h>
+#include <opus.h>
 
 #include "list.h"
 
