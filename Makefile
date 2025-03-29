@@ -9,7 +9,7 @@ OBJECTS = $(SOURCES:.c=.o)
 HEADERS = files.h compression.h list.h common.h beaProcess.h bfsarProcess.h luaProcess.h opusProcess.h
 
 
-ifeq (PKGCONFIG_ZSTD,0)
+ifneq ($(PKGCONFIG_ZSTD),0)
 CFLAGS += $(shell pkg-config --cflags zstd)
 LDFLAGS += $(shell pkg-config --libs zstd)
 else
